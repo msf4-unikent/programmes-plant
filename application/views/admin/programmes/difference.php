@@ -1,4 +1,4 @@
-<h1>Accept Changes</h2>
+<h1>Compare Revisions</h2>
 <p>The following shows the differences between the two revisions.</p>
 <table class="table table-striped table-bordered">
   <thead>
@@ -23,7 +23,7 @@
 </table>
 <div class="form-actions">
   <a class="btn btn-danger promote_toggler" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@promote', array($revision->id))?>">Accept Changes And Promote To Live</a>
-  <a class="btn btn-secondary" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Ignore For Now</a>
+  <a class="btn btn-secondary" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Return To Programmes</a>
 </div>
 
 
