@@ -299,6 +299,38 @@ class Revisionable extends SimpleData {
 	}
 
 	/**
+	 * Return an array of the differences between this model and the revision of this model specified.
+	 * 
+	 * @param  int   $id  The ID of the revision to compare this instance of this model to.
+	 * @return Array      $return An array setup with everything you need to difference.
+	 */
+	public function differences_with_revision($revision_id)
+	{
+		$revision = $this->get_revision($revision_id);
+
+		if (! $revision) return null;
+
+		// Extract the various attributes of the programme and the revision.
+		// These simple arrays from internal to the object are used to constructing the difference.
+		$programme_attributes = $this->attributes;
+		$revision_attributes = $revision->attributes;
+
+		// Ignore these fields which will always change.
+		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live', 'status') as $ignore) 
+		{
+			unset($revision_attributes[$ignore]);
+			unset($programme_attributes[$ignore]);
+		}
+
+		return $return = array(
+			'difference' => array_diff_assoc($programme_attributes, $revision_attributes),
+			'start' => $programme_attributes,
+			'end' => $revision_attributes,
+			'revision' => $revision
+		);
+	}
+
+	/**
 	 * Get list of attributes used in revisionable object
 	 *
 	 * @param year Year to return results for
