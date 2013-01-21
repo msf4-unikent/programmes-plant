@@ -227,6 +227,8 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * Routing for GET /changes
 	 *
 	 * The change request page.
+	 * 
+	 * @todo Update to reflect current revisions methodology.
 	 */
 	public function get_changes()
 	{
