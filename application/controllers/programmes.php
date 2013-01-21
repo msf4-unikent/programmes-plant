@@ -239,7 +239,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data['revision'] = $revision;
 		$this->data['programme'] = $programme;
 
-		return View::make('admin.'.$this->views.'.difference',$this->data);
+		$this->layout->nest('content', 'admin.'.$this->views.'.difference', $this->data);
 	}
 
 	private function splitToText($list,$options)
