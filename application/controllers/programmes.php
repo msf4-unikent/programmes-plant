@@ -197,63 +197,30 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		if (! $programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		$revision = $programme->get_revision($revision_id);
+		$differences = $programme->differences_with_revision($revision_id);
 
-		if (! $revision) return Redirect::to($year.'/'.$type.'/'.$this->views);
-
-		$programme_attributes = $programme->attributes;
-		$revision_for_diff = $revision->attributes;
-
-		// Ignore these fields which will always change.
-		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live') as $ignore) 
+		if ($differences == null)
 		{
-			unset($revision_for_diff[$ignore]);
-			unset($programme_attributes[$ignore]);
+			echo "Some problem occured.";
 		}
-
-		$schools = School::all_as_list();
-		$sub = Programme::all_as_list();
-		$pro = Programme::all_as_list();
-
-		//$revision_for_diff['related_school_ids'] = $this->splitToText($revision_for_diff['related_school_ids'],$schools);
-		//$programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$sub);
-		//$revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$sub);
-		//$programme_attributes['related_programme_ids'] = $this->splitToText($programme_attributes['related_programme_ids'],$pro);
-		//$revision_for_diff['related_programme_ids'] = $this->splitToText($revision_for_diff['related_programme_ids'],$pro);
-
-		$differences = array_diff_assoc($programme_attributes, $revision_for_diff);
 
 		$diff = array();
 
-		foreach ($differences as $field => $value) 
+		foreach ($differences['difference'] as $field => $value) 
 		{
 			$diff[$field] = SimpleDiff::htmlDiff($programme_attributes[$field], $revision_for_diff[$field]);
 		}
 
 		$this->data['diff'] = $diff;
-		$this->data['new'] = $revision_for_diff;
-		$this->data['old'] = $programme_attributes;
+		$this->data['new'] = $differences['start'];
+		$this->data['old'] = $differences ['end'];
 
 		$this->data['attributes'] = Programme::get_attributes_list();
 
-		$this->data['revision'] = $revision;
+		$this->data['revision'] = $differences['revision'];
 		$this->data['programme'] = $programme;
 
 		$this->layout->nest('content', 'admin.'.$this->views.'.difference', $this->data);
-	}
-
-	private function splitToText($list,$options)
-	{
-		if($list == '' || $list == null) return '';
-
-		$list = explode(',',$list);
-		$l_str = '';
-		foreach ($list as $val) {
-				$l_str .= $options[$val].', ';
-
-		}
-
-		return $l_str;
 	}
 
 	/**
