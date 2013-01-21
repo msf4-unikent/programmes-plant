@@ -9,16 +9,16 @@
 <h3>Active revisions</h3>
 
 <?php
-// Loop through revisions (display modes for active & previous are differnt)
-
-foreach ($revisions as $revision){
-
-    echo View::make('admin.revisions.partials.active_revision', array('revision' => $revision, 'programme' => $programme))->render();
-    //After live switch mode to "non-active"
-    if($revision->status =='live'){
-      break;
-    }
-
+// Loop through revisions (display modes for active and previous are different).
+foreach ($revisions as $revision)
+{
+  echo View::make('admin.revisions.partials.active_revision', array('revision' => $revision, 'programme' => $programme))->render();
+  
+  //After live switch mode to "non-active"
+  if($revision->status == 'live')
+  {
+    break;
+  }
 }
 ?>
 
