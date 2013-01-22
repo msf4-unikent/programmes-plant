@@ -17,7 +17,7 @@
 		<div style='padding:10px;' class='alert alert-info alert-block'>		
 			<div style='float:right;'>
   			<a class="btn btn-info" href="<?php echo $diff_link;?>">Differences from live</a>
-  			<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo $live_link;?>">Make Live</a>
+  			<a class="popup_toggler btn btn-success" href="#make_revision_live" rel="<?php echo $live_link;?>">Make live</a>
   			<a class="popup_toggler btn btn-warning" href="#use_previous" rel="<?php echo $revert_link;?>">Use previous</a>
   		</div>
 		  <span class="label label-info" >Current revision</span>
