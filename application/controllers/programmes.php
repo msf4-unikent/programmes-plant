@@ -220,8 +220,6 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data['revision'] = $differences['revision'];
 		$this->data['programme'] = $programme;
 
-		dd($this->data);
-
 		$this->layout->nest('content', 'admin.'.$this->views.'.difference', $this->data);
 	}
 
