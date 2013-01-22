@@ -326,7 +326,19 @@ class Revisionable extends SimpleData {
 
 		$difference = array_diff_assoc($programme_attributes, $revision_attributes);
 
-		return $difference;
+		$return = array();
+
+		foreach($difference as $field => $value)
+		{
+			$return['difference'][$field] = array(
+				'self' => $this->{$field},
+				'revision' => $revision->{$field}
+			);
+		}
+
+		$return['revision'] = $revision;
+
+		return $return;
 	}
 
 	/**

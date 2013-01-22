@@ -604,9 +604,10 @@ class TestRevisionable extends ModelTestCase {
 		$this->assertNotNull($programme->differences_with_revision(1));
 	}
 
-	public function testdifferences_from_revisionReturnContainsCorrectNumberOfChangesBetweenModelAndRevision()
+	public function testdifferences_from_revisionReturnContainsCorrectNumberOfChangesBetweenModelAndRevisionInDifferenceKeyOfArray()
 	{
 		$input = array('programme_title_1' => 'Correct Number Of Changes 1');
+
 		$this->populate('Programme', $input);
 
 		// Make a revision.
@@ -615,10 +616,42 @@ class TestRevisionable extends ModelTestCase {
 		$programme->save();
 
 		$return = $programme->differences_with_revision(1);
-		$this->assertCount(1, $return, "We didn't get the correct amount of changes back.");
+
+		$this->assertCount(1, $return['difference'], "We didn't get the correct amount of changes back.");
 	}
 
-	public function testdifferences_from_revisionReturnsCorrectDifferencesWhenChangesAreMade()
+	public function testdiffereences_from_revisionReturnContainsARevisionObject()
+	{
+		$input = array('programme_title_1' => 'Test 1');
+		$this->populate('Programme', $input);
+
+		// Make a revision.
+		$programme = Programme::find(1);
+		$programme->programme_title_1 = 'Test 2';
+		$programme->save();
+
+		$return = $programme->differences_with_revision(1);
+
+		$this->assertEquals('ProgrammeRevision', get_class($return['revision']));
+	}
+
+	public function testdifferences_from_revisionReturnRevisionObjectIsActuallyTheCorrectRevision()
+	{
+		$input = array('programme_title_1' => 'Test 1');
+		$this->populate('Programme', $input);
+
+		// Make a revision.
+		$programme = Programme::find(1);
+		$programme->programme_title_1 = 'Test 2';
+		$programme->save();
+
+		$return = $programme->differences_with_revision(1);
+		$revision = $programme->get_revision(1);
+
+		$this->assertEquals($revision, $return['revision']);
+	}
+
+	public function testdifferences_from_revisionReturnsCorrectDifferencesWhenChangesAreMadeInTheDifferenceArray()
 	{
 		$input = array('programme_title_1' => 'Correct Number Of Changes 1');
 		$this->populate('Programme', $input);
@@ -630,13 +663,20 @@ class TestRevisionable extends ModelTestCase {
 		$programme->save();
 
 		$expected = array(
-			'programme_title_1' => 'Correct Number Of Changes 2',
-			'slug_2' => 'slugs-arent-nice'
+			'programme_title_1' => array(
+				'self' => 'Correct Number Of Changes 2',
+				'revision' => 'Correct Number Of Changes 1'
+			),
+			'slug_2' => array(
+				'self' => 'slugs-arent-nice',
+				'revision' => null
+			)
 		);
 
 		$return = $programme->differences_with_revision(1);
 
-		$this->assertEquals($return, $expected);
+		$this->assertEquals($return['difference'], $expected);
+	}
 	}
 
 }
