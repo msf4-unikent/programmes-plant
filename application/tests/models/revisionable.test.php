@@ -318,10 +318,13 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertFalse(Cache::has('Programme-2014-options-list'));
 	}
-
 	
-	// New revision tests
-	public function testRevisionCreatedOnSave(){
+	/**
+	 * New revision tests.
+	 */
+
+	public function testRevisionCreatedOnSave()
+	{
 		$this->populate();
 
     	$revisionable_item = Programme::find(1);
@@ -329,6 +332,7 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertNotNull($revision);
 	}
+
 	public function testInitalRevisionForNewProgrammeIsSelected()
 	{
 		$this->populate();
