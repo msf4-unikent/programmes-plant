@@ -111,25 +111,30 @@ class Revisionable_Controller extends Admin_Controller {
 	}
 
 	/**
-	 * Routing for GET /$year/$type/{data_type}/revisions/{$itm_id}
+	 * Routing for GET /$year/$type/{data_type}/revisions/{$id}
 	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
 	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
-	 * @param string $itm_id       The id of the item to show revisions for
+	 * @param string $id       The id of the item to show revisions for
 	*/
-	public function get_revisions($year, $type, $itm_id = false){
-
+	public function get_revisions($year, $type, $id = false)
+	{
 		$model = $this->model;
 
 		// Ensure item exists (Redirect if it does not)
-		$course = $model::find($itm_id);
-		if(!$course) return Redirect::to($year.'/'.$type.'/'.$this->views);
-		// load revisions for item.
-		$this->data['programme'] = $course ;
-		if ($revisions = $course->get_revisions()) {
-				$this->data['revisions'] =  $revisions;
+		$programme = $model::find($id);
+
+		if (! $programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+
+		$this->data['programme'] = $programme;
+
+		if ($revisions = $programme->get_revisions())
+		{
+			$this->data['revisions'] =  $revisions;
 		}
-		// Display view
+
+		$this->data['live_revision_id'] = $programme->get_live_revision_id();
+
 		$this->layout->nest('content', 'admin.revisions.index', $this->data);
 	}
 
