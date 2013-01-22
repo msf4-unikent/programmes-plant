@@ -1,8 +1,7 @@
 <?php
 require_once dirname(dirname(__FILE__)) . '/lib/ControllerTestCase.php';
 
-class TestProgrammes_Controller extends ControllerTestCase
-{
+class TestProgrammes_Controller extends ControllerTestCase {
 
 	public function populate()
 	{
