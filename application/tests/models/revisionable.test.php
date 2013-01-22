@@ -694,4 +694,33 @@ class TestRevisionable extends ModelTestCase {
 		$programme->differences_with_revision(2);
 	}
 
+	public function testget_live_revision_idReturnsNullWhenNoRevisionIDIsFound() 
+	{
+		$this->populate();
+
+		// Make a revision.
+		$programme = Programme::find(1);
+		
+		$this->assertNull($programme->get_live_revision_id());
+	}
+
+	public function testget_live_revision_idReturnsCorrectIDWhenNoRevisionIDIsFound()
+	{
+		$this->populate();
+
+		// Make first revision live.
+		$programme = Programme::find(1);
+		$programme->make_revision_live(1);
+
+		$this->assertEquals(1, $programme->get_live_revision_id());
+	
+		// Make a revision.
+		$programme = Programme::find(1);
+		$programme->programme_title_1 = 'Test 2';
+		$programme->save();
+
+		$programme->make_revision_live(2);
+		$this->assertEquals(2, $programme->get_live_revision_id());
+	}
+
 }

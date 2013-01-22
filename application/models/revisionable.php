@@ -154,7 +154,23 @@ class Revisionable extends SimpleData {
 	}
 
 	/**
-	 * Get currently active revision
+	 * Get the ID of the currently live revision of this model.
+	 * 
+	 * @return int $id The ID of the live revision.
+	 */
+	public function get_live_revision_id()
+	{
+		$id = strtolower($this->data_type_id) . '_id';
+		$model = $this->revision_model;
+
+		$live_revision = $model::where($id, '=' , $this->id)->where('status', '=', 'live')->first(array('id'));
+
+		return (! is_null($live_revision)) ? $live_revision->id : $live_revision;
+	}
+
+	/**
+	 * Get currently active revision.
+	 * 
 	 * @return active revision instance
 	 */
 	public function get_active_revision()
