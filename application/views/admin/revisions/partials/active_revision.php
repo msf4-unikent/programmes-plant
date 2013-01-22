@@ -1,10 +1,10 @@
 <?php
-	$diff_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@difference', array($revision->id));
-	$live_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@make_live', array($revision->id));
-	$use_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@use_revision', array($revision->id));
-	$revert_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@revert_to_previous', array($revision->id));
+$diff_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@difference', array($live_revision_id));
+$live_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@make_live', array($revision->id));
+$use_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@use_revision', array($revision->id));
+$revert_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@revert_to_previous', array($revision->id));
 ?>
-<?php if($revision->status =='live'):?>
+<?php if ($revision->status =='live') : ?>
 
 	<div style='padding:10px;' class='alert alert-success alert-block'>
 		<span class="label label-success" >Published</span>
@@ -12,7 +12,7 @@
 		Published at <?php echo $revision->get_published_time(); ?> by <?php echo $revision->made_live_by; ?>
 	</div>
 
-<?php elseif($revision->status =='selected'):?>
+<?php elseif ($revision->status =='selected') : ?>
 
 		<div style='padding:10px;' class='alert alert-info alert-block'>		
 			<div style='float:right;'>
