@@ -18,9 +18,13 @@
 */
 
 class SimpleDiff {
-	public static function diff($old, $new){
+
+	public static function diff($old, $new)
+	{
 		$maxlen = 0;
-		foreach($old as $oindex => $ovalue){
+
+		foreach($old as $oindex => $ovalue)
+		{
 			$nkeys = array_keys($new, $ovalue);
 			foreach($nkeys as $nindex){
 				$matrix[$oindex][$nindex] = isset($matrix[$oindex - 1][$nindex - 1]) ?
@@ -32,22 +36,41 @@ class SimpleDiff {
 				}
 			}	
 		}
+
 		if($maxlen == 0) return array(array('d'=>$old, 'i'=>$new));
+
 		return array_merge(
 			SimpleDiff::diff(array_slice($old, 0, $omax), array_slice($new, 0, $nmax)),
 			array_slice($new, $nmax, $maxlen),
 			SimpleDiff::diff(array_slice($old, $omax + $maxlen), array_slice($new, $nmax + $maxlen)));
 	}
 
-	public static function htmlDiff($old, $new){
-		$ret = '';
+	/**
+	 * Produces a HTML difference between two strings.
+	 * 
+	 * @param  string  $old     The old string.
+	 * @param  string  $new     The new string.
+	 * @return string  $return  The difference between the two rendered as HTML.
+	 */
+	public static function html_diff($old, $new)
+	{
+		$return = '';
+
 		$diff = SimpleDiff::diff(explode(' ', $old), explode(' ', $new));
-		foreach($diff as $k){
-			if(is_array($k))
-				$ret .= (!empty($k['d'])?"<del>".implode(' ',$k['d'])."</del> ":'').
-					(!empty($k['i'])?"<ins>".implode(' ',$k['i'])."</ins> ":'');
-			else $ret .= $k . ' ';
+
+		foreach($diff as $key)
+		{
+			if(is_array($key))
+			{
+				$return .= (!empty($key['d'])?"<del>".implode(' ',$key['d'])."</del> ":'').
+					(!empty($key['i'])?"<ins>".implode(' ',$key['i'])."</ins> ":'');
+			}
+			else
+			{
+				$return .= $key . ' ';
+			}
 		}
-		return $ret;
+
+		return $return;
 	}
 }
