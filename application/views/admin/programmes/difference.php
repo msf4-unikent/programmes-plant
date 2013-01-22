@@ -1,29 +1,23 @@
-<h1>Compare revisions</h2>
-<p>The following shows the differences between the two revisions.</p>
+<h1>Comparing revision <?php echo $revision->get_identifier(); ?> to live</h2>
+<p>The following shows the differences between live and revision <?php echo $revision->get_identifier_string(); ?>.</p>
 <table class="table table-striped table-bordered">
   <thead>
     <th></th>
-    <th>Current version saved on <?php echo $programme->created_at ?></th>
-    <th>Revision created on <?php echo  $revision->created_at ?></th>
+    <th>Live version published <?php echo $programme->get_published_time(); ?> by <?php echo $programme->made_live_by(); ?></th>
+    <th>Revision <?php echo $revision->get_identifier_string(); ?></th>
   </thead>
   <tbody>
-    <?php foreach ($old as $field => $value) : ?>
+    <?php foreach ($difference as $field => $value) : ?>
     <tr>
-      <td><?php echo (! array_key_exists($field, $attributes)) ? __("programmes.$field") : $attributes[$field] ?></td>
-      <td><?php echo  $value ?></td>
-      <td>
-        <?php if (isset($diff[$field])) : ?>
-        <?php echo  $diff[$field] ?>
-        <?php else : ?>
-        <?php if (isset($new[$field])) { echo $new[$field]; } ?>
-        <?php endif; ?>
-      </td>
+      <td><?php echo $field; ?></td>
+      <td><?php echo $value['self']; ?></td>
+      <td><?php echo SimpleDiff::html_diff($value['self'], $value['revision']); ?>
     </tr>
     <?php endforeach; ?>
 </table>
 <div class="form-actions">
-  <a class="btn btn-danger promote_toggler" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@promote', array($revision->id))?>">Accept changes and promote to live</a>
-  <a class="btn btn-secondary" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Return to programmes</a>
+  <a class="btn btn-danger promote_toggler" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@promote', array($revision->id))?>">Accept changes and make revision live</a>
+  <a class="btn btn-secondary" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes/revisions/'.URI::segment(4))?>">Return to revisions</a>
 </div>
 
 
