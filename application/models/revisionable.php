@@ -303,8 +303,8 @@ class Revisionable extends SimpleData {
 	 * 
 	 * Remember that this model represents the current revision set to 'selected'.
 	 * 
-	 * @param  int   $id  The ID of the revision to compare this instance of this model to.
-	 * @return Array      $return An array setup with everything you need to difference.
+	 * @param  int   $id     The ID of the revision to compare this instance of this model to.
+	 * @return Array $return An array setup with everything you need to difference. The revision is inside $return['revision'].
 	 */
 	public function differences_with_revision($revision_id)
 	{
