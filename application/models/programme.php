@@ -146,9 +146,6 @@ class Programme extends Revisionable {
 		return 'search_keywords_46';
 	}
 
-
-
-
 	/**
 	 * Get this programme's award.
 	 * 
