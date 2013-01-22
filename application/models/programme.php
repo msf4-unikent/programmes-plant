@@ -399,4 +399,28 @@ class Programme extends Revisionable {
 		return Programme::remove_ids_from_field_names($final);
 	}
 
+	/**
+	 * Get the time this programme was published in a nice format.
+	 * 
+	 * @return string Published date.
+	 */
+	public function get_published_time()
+	{
+		$published_revision = ProgrammeRevision::find($this->get_live_revision_id());
+
+		return $published_revision->get_published_time();
+	}
+
+	/**
+	 * Get the time this programme was published in a nice format.
+	 * 
+	 * @return string Published date.
+	 */
+	public function made_live_by()
+	{
+		$published_revision = ProgrammeRevision::find($this->get_live_revision_id());
+
+		return $published_revision->made_live_by;
+	}
+
 }
