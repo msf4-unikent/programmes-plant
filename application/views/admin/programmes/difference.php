@@ -1,9 +1,9 @@
-<h1>Compare Revisions</h2>
+<h1>Compare revisions</h2>
 <p>The following shows the differences between the two revisions.</p>
 <table class="table table-striped table-bordered">
   <thead>
     <th></th>
-    <th>Current Version saved on <?php echo $programme->created_at ?></th>
+    <th>Current version saved on <?php echo $programme->created_at ?></th>
     <th>Revision created on <?php echo  $revision->created_at ?></th>
   </thead>
   <tbody>
@@ -22,15 +22,15 @@
     <?php endforeach; ?>
 </table>
 <div class="form-actions">
-  <a class="btn btn-danger promote_toggler" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@promote', array($revision->id))?>">Accept Changes And Promote To Live</a>
-  <a class="btn btn-secondary" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Return To Programmes</a>
+  <a class="btn btn-danger promote_toggler" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@promote', array($revision->id))?>">Accept changes and promote to live</a>
+  <a class="btn btn-secondary" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes')?>">Return to programmes</a>
 </div>
 
 
 <div class="modal hide fade" id="promote_revision">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Are You Sure?</h3>
+    <h3>Are you sure?</h3>
   </div>
   <div class="modal-body">
     <p>This will promote this revision to the live version of the programme for this year.</p>
@@ -38,8 +38,8 @@
   </div>
   <div class="modal-footer">
     <?php echo Form::open('programmess/promote', 'POST')?>
-      <a data-dismiss="modal" href="#promote_revision" class="btn">Not Right Now</a>
-      <a class="btn btn-danger" id="promote_now">Promote Revision</a>
+      <a data-dismiss="modal" href="#promote_revision" class="btn">Not right now</a>
+      <a class="btn btn-danger" id="promote_now">Promote revision</a>
   <?php echo Form::close()?>
   </div>
 
