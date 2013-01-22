@@ -301,6 +301,8 @@ class Revisionable extends SimpleData {
 	/**
 	 * Return an array of the differences between this model and the revision of this model specified.
 	 * 
+	 * Remember that this model represents the current revision set to 'selected'.
+	 * 
 	 * @param  int   $id  The ID of the revision to compare this instance of this model to.
 	 * @return Array      $return An array setup with everything you need to difference.
 	 */
@@ -322,12 +324,9 @@ class Revisionable extends SimpleData {
 			unset($programme_attributes[$ignore]);
 		}
 
-		return $return = array(
-			'difference' => array_diff_assoc($programme_attributes, $revision_attributes),
-			'start' => $programme_attributes,
-			'end' => $revision_attributes,
-			'revision' => $revision
-		);
+		$difference = array_diff_assoc($programme_attributes, $revision_attributes);
+
+		return $difference;
 	}
 
 	/**

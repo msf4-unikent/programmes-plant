@@ -506,4 +506,133 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testrrim_ids_from_field_namesReturnsStdClass() {}
 
+	/**
+	 * The following tests actually test PHP internals, partly as a refresher as to their function.
+	 */
+
+	public function testarray_diff_assocReturnsAnArrayWhenThereIsADifference()
+	{
+		$first = array('thing' => 'content 1', 'bling' => 'gold');
+		$second = array('thing' => 'content 2', 'bling' => 'gold');
+
+		$this->assertTrue(is_array(array_diff_assoc($first, $second)));
+	}
+
+	public function testarray_diff_assocReturnsArrayWithNoDifferences()
+	{
+		$first = array('thing' => 'content 1', 'bling' => 'gold');
+		$second = array('thing' => 'content 1', 'bling' => 'gold');
+
+		$this->assertTrue(is_array(array_diff_assoc($first, $second)));
+	}
+
+	public function testarray_diff_assocReturnsEmptyArrayWithNoDifferences()
+	{
+		$first = array('thing' => 'content 1', 'bling' => 'gold');
+		$second = array('thing' => 'content 1', 'bling' => 'gold');
+
+		$this->assertCount(0, array_diff_assoc($first, $second));
+	}
+
+	public function testarray_diff_assocReturnsArrayLoadedWithNumberOfChanges()
+	{
+		$first = array('thing' => 'content 1', 'bling' => 'gold');
+		$second = array('thing' => 'content 2', 'bling' => 'gold');
+
+		$this->assertCount(1, array_diff_assoc($first, $second));
+
+		$second['bling'] = 'diamonds';
+		$this->assertCount(2, array_diff_assoc($first, $second));
+	}
+
+	public function testarray_diff_assocReturnsArrayWithValuesThatHaveChanged()
+	{
+		$first = array('thing' => 'content 1', 'bling' => 'gold');
+		$second = array('thing' => 'content 2', 'bling' => 'gold');
+
+		$this->assertArrayHasKey('thing', array_diff_assoc($first, $second));
+
+		// Restore and check the change the other way around.
+		$second['thing'] = 'content 1';
+		$second['bling'] = 'diamonds';
+		$this->assertArrayHasKey('bling', array_diff_assoc($first, $second));
+	}
+
+	public function testdifferences_with_revisionReturnsNullWhenRevisionDoesNotExist()	
+	{
+		// Create one Programme and one revision of it.
+		$input = array('programme_title_1' => 'Test programme title');
+		$this->populate('Programme', $input);
+
+		$programme = Programme::find(1);
+
+		$programme->programme_title_1 = 'Changed programme title';
+		$programme->save();
+
+		$this->assertNull($programme->differences_with_revision(3));
+	}
+
+	public function testdifferences_from_revisionReturnsAnArray()
+	{
+		$input = array('programme_title_1' => 'Test 1');
+		$this->populate('Programme', $input);
+
+		$programme = Programme::find(1);
+
+		// Make a new revision with a few changes we should know about.
+		$programme->programme_title_1 = 'Test Change 2';
+		$programme->save();
+
+		$return = $programme->differences_with_revision(2);
+		$this->assertTrue(is_array($return));
+	}
+
+	public function testdifferences_from_revisionDoesNotReturnANullWhenThereAreChanges()
+	{
+		$input = array('programme_title_1' => 'Test 1');
+		$this->populate('Programme', $input);
+
+		// Make a revision.
+		$programme = Programme::find(1);
+		$programme->programme_title_1 = 'Test 2';
+		$programme->save();
+
+		$this->assertNotNull($programme->differences_with_revision(1));
+	}
+
+	public function testdifferences_from_revisionReturnContainsCorrectNumberOfChangesBetweenModelAndRevision()
+	{
+		$input = array('programme_title_1' => 'Correct Number Of Changes 1');
+		$this->populate('Programme', $input);
+
+		// Make a revision.
+		$programme = Programme::find(1);
+		$programme->programme_title_1 = 'Correct Number Of Changes 2';
+		$programme->save();
+
+		$return = $programme->differences_with_revision(1);
+		$this->assertCount(1, $return, "We didn't get the correct amount of changes back.");
+	}
+
+	public function testdifferences_from_revisionReturnsCorrectDifferencesWhenChangesAreMade()
+	{
+		$input = array('programme_title_1' => 'Correct Number Of Changes 1');
+		$this->populate('Programme', $input);
+
+		// Make a revision.
+		$programme = Programme::find(1);
+		$programme->programme_title_1 = 'Correct Number Of Changes 2';
+		$programme->slug_2 = 'slugs-arent-nice';
+		$programme->save();
+
+		$expected = array(
+			'programme_title_1' => 'Correct Number Of Changes 2',
+			'slug_2' => 'slugs-arent-nice'
+		);
+
+		$return = $programme->differences_with_revision(1);
+
+		$this->assertEquals($return, $expected);
+	}
+
 }
