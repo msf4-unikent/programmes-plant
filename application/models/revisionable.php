@@ -312,6 +312,11 @@ class Revisionable extends SimpleData {
 
 		if (! $revision) return null;
 
+		if ($revision->status == 'selected')
+		{
+			throw new RevisionableObjectSelfComparison('Cannot compare a revisionable object with itself');
+		}
+
 		// Extract the various attributes of the programme and the revision.
 		// These simple arrays from internal to the object are used to constructing the difference.
 		$programme_attributes = $this->attributes;
@@ -495,3 +500,5 @@ class Revisionable extends SimpleData {
     }
 
 }
+
+class RevisionableObjectSelfComparison extends \Exception {}

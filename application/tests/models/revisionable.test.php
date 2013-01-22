@@ -587,7 +587,7 @@ class TestRevisionable extends ModelTestCase {
 		$programme->programme_title_1 = 'Test Change 2';
 		$programme->save();
 
-		$return = $programme->differences_with_revision(2);
+		$return = $programme->differences_with_revision(1);
 		$this->assertTrue(is_array($return));
 	}
 
@@ -677,6 +677,21 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertEquals($return['difference'], $expected);
 	}
+
+	/**
+     * @expectedException RevisionableObjectSelfComparison
+     */
+	public function testdifferences_from_revisionThrowsExceptionWhenYouAttemptToCompareItWithItself()
+	{
+		$input = array('programme_title_1' => 'Test 1');
+		$this->populate('Programme', $input);
+
+		// Make a revision.
+		$programme = Programme::find(1);
+		$programme->programme_title_1 = 'Test 2';
+		$programme->save();
+
+		$programme->differences_with_revision(2);
 	}
 
 }
