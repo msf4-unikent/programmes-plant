@@ -113,9 +113,9 @@ class Revisionable_Controller extends Admin_Controller {
 	/**
 	 * Routing for GET /$year/$type/{data_type}/revisions/{$id}
 	 *
-	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
-	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy)
-	 * @param string $id       The id of the item to show revisions for
+	 * @param int    $year  The year of the programme (not used, but to keep routing happy).
+	 * @param string $type  The type, either undegrad/postgrade (not used, but to keep routing happy).
+	 * @param string $id    The ID of the item to show revisions for.
 	*/
 	public function get_revisions($year, $type, $id = false)
 	{
