@@ -12,7 +12,7 @@
 // Loop through revisions (display modes for active and previous are different).
 foreach ($revisions as $revision)
 {
-  echo View::make('admin.revisions.partials.active_revision', array('revision' => $revision, 'programme' => $programme))->render();
+  echo View::make('admin.revisions.partials.active_revision', array('revision' => $revision, 'programme' => $programme, 'live_revision_id' => $live_revision_id))->render();
   
   //After live switch mode to "non-active"
   if($revision->status == 'live')
