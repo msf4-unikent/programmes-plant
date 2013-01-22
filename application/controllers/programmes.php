@@ -184,7 +184,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	 * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
 	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
-	 * @param string $type         The type, either undegrad/postgrade (not used, but to keep routing happy).
+	 * @param string $type         The type, either ug (undergraduate) or pg (postgraduate) (not used, but to keep routing happy).
 	 * @param int    $programme_id The programme ID we are promoting a given revision to be live.
 	 * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
 	 */
@@ -197,27 +197,15 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		if (! $programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		$differences = $programme->differences_with_revision($revision_id);
+		$difference = $programme->differences_with_revision($revision_id);
 
-		if ($differences == null)
+		if ($difference == null)
 		{
 			echo "Some problem occured.";
 		}
+		$this->data['difference'] = $difference['difference'];
+		$this->data['revision'] = $difference['revision'];
 
-		$diff = array();
-
-		foreach ($differences['difference'] as $field => $value) 
-		{
-			$diff[$field] = SimpleDiff::htmlDiff($programme_attributes[$field], $revision_for_diff[$field]);
-		}
-
-		$this->data['diff'] = $diff;
-		$this->data['new'] = $differences['start'];
-		$this->data['old'] = $differences ['end'];
-
-		$this->data['attributes'] = Programme::get_attributes_list();
-
-		$this->data['revision'] = $differences['revision'];
 		$this->data['programme'] = $programme;
 
 		$this->layout->nest('content', 'admin.'.$this->views.'.difference', $this->data);
