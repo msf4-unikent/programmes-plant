@@ -192,7 +192,7 @@ class Programmes_Controller extends Revisionable_Controller {
 	{
 		if (! $programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
 
-		// Get revision specified
+		// Get revision specified.
 		$programme = Programme::find($programme_id);
 
 		if (! $programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
@@ -219,6 +219,8 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		$this->data['revision'] = $differences['revision'];
 		$this->data['programme'] = $programme;
+
+		dd($this->data);
 
 		$this->layout->nest('content', 'admin.'.$this->views.'.difference', $this->data);
 	}

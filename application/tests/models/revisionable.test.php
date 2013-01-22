@@ -42,11 +42,11 @@ class TestRevisionable extends ModelTestCase {
 
 	public function populate($model = 'Programme', $input = false)
 	{
-
 		if (! $input)
 		{
 			$input = $this->input;
 		}
+
 		$model::create($input);
 	}
 
@@ -69,7 +69,6 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testall_as_listReturnsTheSameWhenWhenItIsInDiskCache()
 	{
-
 		$this->populate();
 
 		// Warm up the cache.
@@ -105,7 +104,8 @@ class TestRevisionable extends ModelTestCase {
 		$this->assertTrue(Cache::has('Programme--options-list'));
 	}
 
-	public function testall_as_listResultsCacheToMemoryWhenThereIsNoCache() {
+	public function testall_as_listResultsCacheToMemoryWhenThereIsNoCache()
+	{
 		$this->populate();
 
 		Programme::all_as_list();
@@ -143,7 +143,6 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testResultsComeFromInMemoryCacheIfItExistsNotFromDisk()
 	{
-
 		$this->populate();
 
 		// Warm cache, presumably also the in memory cache.
@@ -330,7 +329,8 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertNotNull($revision);
 	}
-	public function testInitalRevisionForNewProgrammeIsSelected(){
+	public function testInitalRevisionForNewProgrammeIsSelected()
+	{
 		$this->populate();
 
     	$revisionable_item = Programme::find(1);
@@ -338,8 +338,9 @@ class TestRevisionable extends ModelTestCase {
 
         $this->assertEquals("selected", $revision->status);
 	}
-	public function testSecondSaveCreatesSecondRevision(){
-		
+
+	public function testSecondSaveCreatesSecondRevision()
+	{
 		$this->populate();
 
     	$revisionable_item = Programme::find(1);
@@ -350,8 +351,9 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertNotNull($revision);
 	}
-	public function testSecondSaveSetsStatusOfFirstRevisionToDraft(){
-		
+
+	public function testSecondSaveSetsStatusOfFirstRevisionToDraft()
+	{
 		$this->populate();
 
     	$revisionable_item = Programme::find(1);
@@ -362,8 +364,6 @@ class TestRevisionable extends ModelTestCase {
 
         $this->assertEquals("draft", $revision->status);
 	}
-
-
 
 	public function testMakeRevisionLiveSetsLiveFieldToFullyPublished()
 	{

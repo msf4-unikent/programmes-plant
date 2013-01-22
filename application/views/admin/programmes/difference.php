@@ -9,7 +9,7 @@
   <tbody>
     <?php foreach ($old as $field => $value) : ?>
     <tr>
-      <td><?php echo (!array_key_exists($field, $attributes)) ? __("programmes.$field") : $attributes[$field] ?></td>
+      <td><?php echo (! array_key_exists($field, $attributes)) ? __("programmes.$field") : $attributes[$field] ?></td>
       <td><?php echo  $value ?></td>
       <td>
         <?php if (isset($diff[$field])) : ?>
