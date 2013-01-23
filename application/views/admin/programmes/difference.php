@@ -11,7 +11,13 @@
     <tr>
       <td><?php echo $programme_fields[$field]->field_name; ?></td>
       <td><?php echo $value['self']; ?></td>
-      <td><?php echo SimpleDiff::html_diff($value['self'], $value['revision']); ?>
+      <td>
+      <?php if ($programme_fields[$field]->field_type == 'text') : ?>
+        <?php echo SimpleDiff::html_diff($value['self'], $value['revision']); ?>
+      <?php else: ?>
+        <?php echo $value['revision']; ?>
+      <?php endif; ?>
+      </td>
     </tr>
     <?php endforeach; ?>
 </table>
