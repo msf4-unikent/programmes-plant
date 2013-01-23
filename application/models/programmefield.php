@@ -15,7 +15,9 @@ class ProgrammeField extends Field
     public static function get_types_as_list()
     {
     	$list_types = array();
-    	foreach (self::$types as $key => $value) {
+    	
+        foreach (self::$types as $key => $value) 
+        {
     		$list_types[$value] = $key;
     	}
     	return $list_types;
