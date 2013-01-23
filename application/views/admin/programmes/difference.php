@@ -9,7 +9,7 @@
   <tbody>
     <?php foreach ($difference as $field => $value) : ?>
     <tr>
-      <td><?php echo $field; ?></td>
+      <td><?php echo $programme_fields[$field]->field_name; ?></td>
       <td><?php echo $value['self']; ?></td>
       <td><?php echo SimpleDiff::html_diff($value['self'], $value['revision']); ?>
     </tr>

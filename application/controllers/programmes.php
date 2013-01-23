@@ -209,6 +209,17 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		$this->data['programme'] = $programme;
 
+		// Establish the information about the fields that have changed and pass them to the view.
+		$this->data['programme_fields'] = array();
+
+		foreach(array_keys($this->data['difference']) as $field_column)
+		{
+			$field = ProgrammeField::where('colname', '=', $field_column)->get();
+			$this->data['programme_fields'][$field_column] = $field[0];
+
+			unset($field); 
+		}
+
 		$this->layout->nest('content', 'admin.'.$this->views.'.difference', $this->data);
 	}
 
