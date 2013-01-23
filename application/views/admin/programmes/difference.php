@@ -26,7 +26,6 @@
   <a class="btn btn-secondary" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes/revisions/'.URI::segment(4))?>">Return to revisions</a>
 </div>
 
-
 <div class="modal hide fade" id="promote_revision">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
@@ -42,7 +41,6 @@
       <a class="btn btn-danger" id="promote_now">Promote revision</a>
   <?php echo Form::close()?>
   </div>
-
 
 <script>
 $('#promote_revision').modal({
