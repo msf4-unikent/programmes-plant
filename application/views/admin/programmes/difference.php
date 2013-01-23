@@ -1,10 +1,10 @@
 <h1>Comparing revision <?php echo $revision->get_identifier(); ?> to live</h2>
-<p>The following shows the differences between live and revision <?php echo $revision->get_identifier_string(); ?>.</p>
+<p>The following shows the differences between live published <?php echo $programme->get_published_time(); ?> by <?php echo $programme->made_live_by(); ?> and revision <?php echo $revision->get_identifier_string(); ?>.</p>
 <table class="table table-striped table-bordered">
   <thead>
     <th></th>
-    <th>Live version published <?php echo $programme->get_published_time(); ?> by <?php echo $programme->made_live_by(); ?></th>
-    <th>Revision <?php echo $revision->get_identifier_string(); ?></th>
+    <th>Live</th>
+    <th>Revision <?php echo $revision->get_identifier(); ?></th>
   </thead>
   <tbody>
     <?php foreach ($difference as $field => $value) : ?>
