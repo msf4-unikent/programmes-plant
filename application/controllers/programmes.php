@@ -201,8 +201,9 @@ class Programmes_Controller extends Revisionable_Controller {
 
 		if ($difference == null)
 		{
-			echo "Some problem occured.";
+			Repsonse::error(404);
 		}
+
 		$this->data['difference'] = $difference['difference'];
 		$this->data['revision'] = $difference['revision'];
 
