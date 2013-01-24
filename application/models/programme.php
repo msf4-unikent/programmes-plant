@@ -4,7 +4,9 @@ class Programme extends Revisionable {
 
 	public static $table = 'programmes';
 	
-	protected $revision_model = 'ProgrammeRevision';
+	public static $revision_model = 'ProgrammeRevision';
+
+	public static $data_type_id = 'programme_id';
 
 	/**
 	 * Get the name of the title field/column in the database.

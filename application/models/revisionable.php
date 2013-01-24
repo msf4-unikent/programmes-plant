@@ -7,13 +7,13 @@
 class Revisionable extends SimpleData {
 
 	// Revision model (name of model for revisions of this type)
-	protected $revision_model = false;
+	public static $revision_model = false;
 
 	// Data Type (Programme, Global, etc)
 	protected $data_type = false;
 	
 	// Id used to link items of datatype (optional)
-	protected $data_type_id = false;
+	public static $data_type_id = false;
 
 	// Does this model seperate items by year? (false by default, although true for (all|most) revisionble types)
 	public static $data_by_year = true;
