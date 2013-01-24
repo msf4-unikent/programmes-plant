@@ -3,7 +3,9 @@
 class ProgrammeSettings_Controller extends Revisionable_Controller {
 
 	public $restful = true;
+
 	public $views = 'programmesettings';
+	
 	protected $model = 'ProgrammeSetting';
 
 	/**

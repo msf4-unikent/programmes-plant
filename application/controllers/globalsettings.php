@@ -3,7 +3,9 @@
 class GlobalSettings_Controller extends Revisionable_Controller {
 
 	public $restful = true;
+
 	public $views = 'globalsettings';
+	
 	protected $model = 'GlobalSetting';
 
 	/**
