@@ -50,11 +50,9 @@ Route::group(array('before' => ''), function(){
 	Route::any('(ug|pg)/fields/programmes/(:any?)', 'programmefields@(:2)');
 	Route::any('(ug|pg)/fields/programmes/(:any?)/(:num?)', 'programmefields@(:2)');
 
-
 	Route::any('(ug|pg)/fields/globalsettings', 'globalsettingfields@index');
 	Route::any('(ug|pg)/fields/globalsettings/(:any?)', 'globalsettingfields@(:2)');
 	Route::any('(ug|pg)/fields/globalsettings/(:any?)/(:num?)', 'globalsettingfields@(:2)');
-
 
 	Route::any('(ug|pg)/fields/programmesettings', 'programmesettingfields@index');
 	Route::any('(ug|pg)/fields/programmesettings/(:any?)', 'programmesettingfields@(:2)');
