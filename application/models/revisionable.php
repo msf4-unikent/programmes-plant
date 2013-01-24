@@ -19,6 +19,29 @@ class Revisionable extends SimpleData {
 	public static $data_by_year = true;
 
 	/**
+	 * Get the ID of the currently live revision of this model.
+	 * 
+	 * @return int $id The ID of the live revision.
+	 */
+	public static function get_live_revision_id($id)
+	{
+		if (isset(static::$data_type_id))
+		{
+			$id_column = static::$data_type_id;
+		}
+		else
+		{
+			$id_column = strtolower(get_called_class()) . '_id';
+		}
+
+		$revision_model = static::$revision_model;
+
+		$live_revision = $revision_model::where($id_column, '=' , $id)->where('status', '=', 'live')->first(array('id'));
+
+		return (! is_null($live_revision)) ? $live_revision->id : $live_revision;
+	}
+
+	/**
 	 * Create new instance of a revisionble object
 	 *
 	 * @param $attributes Attributes to be added to new instance of this model
@@ -151,21 +174,6 @@ class Revisionable extends SimpleData {
 	{
 		$model = $this->revision_model;
 		return $model::find($revision_id);
-	}
-
-	/**
-	 * Get the ID of the currently live revision of this model.
-	 * 
-	 * @return int $id The ID of the live revision.
-	 */
-	public function get_live_revision_id()
-	{
-		$id = strtolower($this->data_type_id) . '_id';
-		$model = $this->revision_model;
-
-		$live_revision = $model::where($id, '=' , $this->id)->where('status', '=', 'live')->first(array('id'));
-
-		return (! is_null($live_revision)) ? $live_revision->id : $live_revision;
 	}
 
 	/**
