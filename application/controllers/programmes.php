@@ -207,7 +207,7 @@ class Programmes_Controller extends Revisionable_Controller {
 		$this->data['difference'] = $difference['difference'];
 		$this->data['revision'] = $difference['revision'];
 
-		$this->data['programme'] = $programme;
+		$this->data['live'] = $programme;
 
 		// Establish the information about the fields that have changed and pass them to the view.
 		$this->data['programme_fields'] = array();
