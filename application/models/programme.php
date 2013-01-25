@@ -6,7 +6,7 @@ class Programme extends Revisionable {
 	
 	public static $revision_model = 'ProgrammeRevision';
 
-	public static $data_type_id = 'programme_id';
+	public static $data_type_id = 'programme';
 
 	/**
 	 * Get the name of the title field/column in the database.
