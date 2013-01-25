@@ -19,21 +19,74 @@ class Revisionable extends SimpleData {
 	public static $data_by_year = true;
 
 	/**
-	 * Get the ID of the currently live revision of this model.
+	 * Compare revisions.
 	 * 
-	 * @return int $id The ID of the live revision.
+	 * @param int|Revisionable  $a                 The first revision as an object or an ID.
+	 * @param int|Revisionable  $b                 The second revision as an object or ID.
+	 * @param bool              $include_revision  If true insert the revision object into the array.  
+	 * @return Array $return                       An array setup with everything you need to difference. The revision is inside $return['revision'].
 	 */
-	public static function get_live_revision_id($id)
+	public static function differences_between_revisions($a, $b, $include_revision = false)
 	{
-		if (isset(static::$data_type_id))
+		// In the situation where we have been passed two integers check we are not performing self comparison.
+		if (is_integer($a) && is_integter($b))
 		{
-			$id_column = static::$data_type_id;
-		}
-		else
-		{
-			$id_column = strtolower(get_called_class()) . '_id';
+			if ($a == $b)
+			{
+				throw new RevisionableObjectSelfComparison('Cannot compare a revisionable object with itself');
+			}
 		}
 
+		// Get hold of some revision objects if we got integers as input.
+		if (is_integer($a))
+		{
+			$a = $this->get_revision($a);
+		}
+
+		if (! $a) return null;
+
+		if (is_integer($b))
+		{
+			$b = $this->get_revision($b);
+		}
+		
+		if (! $b) return null;
+
+		// Double check against self comparison.
+		if ($a->id == $b->id)
+		{
+			throw new RevisionableObjectSelfComparison('Cannot compare a revisionable object with itself');
+		}
+
+		$a_attributes = $a->attributes;
+		$b_attributes = $b->attributes;
+
+		// Ignore these fields which will always change.
+		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live', 'status') as $ignore) 
+		{
+			unset($a_attributes[$ignore]);
+			unset($b_attributes[$ignore]);
+		}
+
+		$difference = array_diff_assoc($a_attributes, $b_attributes);
+
+		$return = array();
+
+		foreach($difference as $field => $value)
+		{
+			$return['difference'][$field] = array(
+				'self'     => $a->{$field},
+				'revision' => $b->{$field}
+			);
+		}
+
+		if ($include_revision)
+		{
+			$return['revision'] = $b;
+		}
+
+		return $return;
+	}
 		$revision_model = static::$revision_model;
 
 		$live_revision = $revision_model::where($id_column, '=' , $id)->where('status', '=', 'live')->first(array('id'));
@@ -327,8 +380,8 @@ class Revisionable extends SimpleData {
 	 * 
 	 * Remember that this model represents the current revision set to 'selected'.
 	 * 
-	 * @param  int   $id     The ID of the revision to compare this instance of this model to.
-	 * @return Array $return An array setup with everything you need to difference. The revision is inside $return['revision'].
+	 * @param  int         $id      The ID of the revision to compare this instance of this model to.
+	 * @return Array| null $return  An array setup with everything you need to difference. The revision is inside $return['revision'].
 	 */
 	public function differences_with_revision($revision_id)
 	{
@@ -336,38 +389,7 @@ class Revisionable extends SimpleData {
 
 		if (! $revision) return null;
 
-		if ($revision->status == 'selected')
-		{
-			throw new RevisionableObjectSelfComparison('Cannot compare a revisionable object with itself');
-		}
-
-		// Extract the various attributes of the programme and the revision.
-		// These simple arrays from internal to the object are used to constructing the difference.
-		$programme_attributes = $this->attributes;
-		$revision_attributes = $revision->attributes;
-
-		// Ignore these fields which will always change.
-		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live', 'status') as $ignore) 
-		{
-			unset($revision_attributes[$ignore]);
-			unset($programme_attributes[$ignore]);
-		}
-
-		$difference = array_diff_assoc($programme_attributes, $revision_attributes);
-
-		$return = array();
-
-		foreach($difference as $field => $value)
-		{
-			$return['difference'][$field] = array(
-				'self' => $this->{$field},
-				'revision' => $revision->{$field}
-			);
-		}
-
-		$return['revision'] = $revision;
-
-		return $return;
+		return static::differences_between_revisions($this->get_active_revision(), $revision, true);
 	}
 
 	/**
