@@ -135,7 +135,8 @@ class ProgrammeField extends Field
      * @param year (Unused - PHP requires signature not to change)
      * @return data Object
      */
-    public static function get_api_data(){
+    public static function get_api_data()
+    {
         // generate keys
         $model = strtolower(get_called_class());
         $cache_key = 'api-'.$model;
@@ -149,7 +150,8 @@ class ProgrammeField extends Field
      * Get live version of API data from database
      *
      */
-    public static function generate_api_data(){
+    public static function generate_api_data()
+    {
         // keys
         $model = strtolower(get_called_class());
         $cache_key = 'api-'.$model;
@@ -165,4 +167,5 @@ class ProgrammeField extends Field
         // return
         return $data;
     }
+
 }
