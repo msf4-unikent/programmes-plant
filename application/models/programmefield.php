@@ -27,7 +27,7 @@ class ProgrammeField extends Field
      * gets all programme sections and the fields within each, and orders the sections by their order value
      * a double-loop then goes through each section and builds up an array of ordered fields
      *
-     * @return array $sections_array
+     * @return array $sections_array  An array arranged section name => section fields as Field object.
      */
     public static function programme_fields_by_section()
     {
