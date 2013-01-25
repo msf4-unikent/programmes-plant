@@ -701,7 +701,7 @@ class TestRevisionable extends ModelTestCase {
 		// Make a revision.
 		$programme = Programme::find(1);
 		
-		$this->assertNull($programme->get_live_revision_id());
+		$this->assertNull(Programme::get_live_revision_id(1));
 	}
 
 	public function testget_live_revision_idReturnsCorrectIDWhenNoRevisionIDIsFound()
@@ -712,7 +712,7 @@ class TestRevisionable extends ModelTestCase {
 		$programme = Programme::find(1);
 		$programme->make_revision_live(1);
 
-		$this->assertEquals(1, $programme->get_live_revision_id());
+		$this->assertEquals(1, Programme::get_live_revision_id(1));
 	
 		// Make a revision.
 		$programme = Programme::find(1);
@@ -720,7 +720,7 @@ class TestRevisionable extends ModelTestCase {
 		$programme->save();
 
 		$programme->make_revision_live(2);
-		$this->assertEquals(2, $programme->get_live_revision_id());
+		$this->assertEquals(2, Programme::get_live_revision_id(1));
 	}
 
 }
