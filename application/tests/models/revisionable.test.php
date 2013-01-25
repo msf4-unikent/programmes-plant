@@ -4,11 +4,12 @@ class RevisionableThing extends Revisionable {}
 
 class TestRevisionable extends ModelTestCase {
 
-	public $input =  array('programme_title_1' => 'Thing', 'id' => 1);
+	public $input =  array('programme_title_1' => 'Thing', 'year'=> '2014', 'created_by' => "test user");
 
 	public static function setUpBeforeClass()
 	{
 		Tests\Helper::migrate();
+		static::clear_models();
 	}
 
 	public function tearDown() 
@@ -16,16 +17,8 @@ class TestRevisionable extends ModelTestCase {
 		// Flush the cache.
 		Cache::flush();
 
-		// Delete from the database.
-		$programme_settings = Programme::all();
+		static::clear_models();
 
-		foreach ($programme_settings as $programme_setting)
-		{
-			$programme_setting->delete();
-		}
-
-		// Kill the list cache (just in case).
-		// This caches everything in memory.
 		Programme::$list_cache = false;
 		
 		parent::tearDown();
@@ -33,12 +26,41 @@ class TestRevisionable extends ModelTestCase {
 
 	public function populate($model = 'Programme', $input = false)
 	{
+
 		if (! $input)
 		{
 			$input = $this->input;
 		}
+		$model::create($input);
+	}
 
-		$object = $model::create($input)->save();
+	public function testget_active_revision_doesnt_return_null()
+	{
+		$this->populate();
+		$programme = Programme::find(1);
+
+		$revision = $programme->get_active_revision();
+
+		$this->assertNotNull($revision);
+	}
+
+	public function testget_active_revision_for_new_programme_is_selected()
+	{
+		$this->populate();
+		$programme = Programme::find(1);
+		$revision = $programme->get_active_revision();
+
+		$this->assertEquals('selected', $revision->status);
+	}
+
+	public function testget_active_revision_for_new_programme_is_live_once_made_live()
+	{
+		$this->populate();
+		$programme = Programme::find(1);
+		$revision = $programme->get_active_revision();
+		$programme->make_revision_live($revision);
+		$revision2 = $programme->get_active_revision();
+		$this->assertEquals('live', $revision2->status);
 	}
 
 	public function testall_as_listReturnsEmptyArrayWhenWeDontHaveAnything()
@@ -131,6 +153,7 @@ class TestRevisionable extends ModelTestCase {
 
 	public function testResultsComeFromInMemoryCacheIfItExistsNotFromDisk()
 	{
+
 		$this->populate();
 
 		// Warm cache, presumably also the in memory cache.
@@ -306,4 +329,203 @@ class TestRevisionable extends ModelTestCase {
 
 		$this->assertFalse(Cache::has('Programme-2014-options-list'));
 	}
+
+	/**
+	* @expectedException RevisioningException
+	*/
+	public function testget_revision_will_throw_exception_on_revision_it_doesnt_own(){
+		$this->populate_two_years();
+		$p1 = Programme::find(1);
+		// p2 = Programme::find(2)
+		//get p2's exception from p1
+		$p1->get_revision(2);
+	}
+
+	
+	// New revision tests
+	public function testRevisionCreatedOnSave(){
+		$this->populate();
+
+    	$revisionable_item = Programme::find(1);
+
+        $revision = $revisionable_item->get_revision(1);
+
+		$this->assertNotNull($revision);
+	}
+	public function testInitalRevisionForNewProgrammeIsSelected(){
+		$this->populate();
+
+    	$revisionable_item = Programme::find(1);
+        $revision = $revisionable_item->get_revision(1);
+
+        $this->assertEquals("selected", $revision->status);
+	}
+	public function testSecondSaveCreatesSecondRevision(){
+		
+		$this->populate();
+
+    	$revisionable_item = Programme::find(1);
+    	$revisionable_item->programme_title_1 = 'new name';
+    	$revisionable_item->save();
+
+        $revision = $revisionable_item->get_revision(2);
+
+		$this->assertNotNull($revision);
+	}
+	public function testSecondSaveSetsStatusOfFirstRevisionToDraft(){
+		
+		$this->populate();
+
+    	$revisionable_item = Programme::find(1);
+    	$revisionable_item->programme_title_1 = 'new name';
+    	$revisionable_item->save();
+
+    	$revision = $revisionable_item->get_revision(1);
+
+        $this->assertEquals("draft", $revision->status);
+	}
+
+
+
+	public function testMakeRevisionLiveSetsLiveFieldToFullyPublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$revisionable_item = Programme::find(1);
+        $revision = $revisionable_item->get_revision(1);
+
+        // make the revision live
+        $revisionable_item->make_revision_live($revision);
+        
+        // find programme #1 and check its 'live' value is 2
+        $programme = Programme::find(1);
+        $this->assertEquals(2, $programme->live);
+	}
+	
+	public function testUseRevisionSetsLiveFieldToNothingPublishedWhenNothingPublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->get_revision(1);
+        
+        // use a revision
+        $programme->use_revision($revision);
+        
+        // find programme #1 again and now check its 'live' value is 0
+        // it should be 0 because previously nothing was published and so everything should remain unpublished
+        // ie we have only used a revision, not made anything live
+        $programme_modified = Programme::find(1);
+        $this->assertEquals(0, $programme_modified->live);
+	}
+	
+	public function testUseRevisionSetsLiveFieldToLatestUnpublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->get_revision(1);
+        
+        // make the revision live
+        $programme->make_revision_live($revision);
+        
+        // make a new revision
+        $programme_new = Programme::find(1);
+        $programme_new->slug = 'test';
+        $programme_new->save();
+        
+        // find programme #1 again and now check its 'live' value is now 1
+        // it should be 1 because previously the latest version was published, but then a newer version was made
+        // ie there is something newer than the live version
+        $programme_modified = Programme::find(1);
+        $this->assertEquals(1, $programme_modified->live);
+	}
+	
+	public function testRevertToRevisionSetsLiveFieldToNothingPublishedWhenNothingPublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->get_revision(1);
+        
+        // use a revision
+        $programme->use_revision($revision);
+        
+        // find programme #1 again and now check its 'live' value is 0
+        // it should be 0 because previously nothing was published and so everything should remain unpublished
+        // ie we have only used a revision, not made anything live
+        $programme_modified = Programme::find(1);
+        $this->assertEquals(0, $programme_modified->live);
+	}
+	
+	public function testRevertToRevisionSetsLiveFieldToLatestUnpublished()
+	{
+    	// set up some data
+    	$this->populate();
+    	$programme = Programme::find(1);
+        $revision = $programme->get_revision(1);
+        
+        // use a revision
+        $programme->use_revision($revision);
+        
+        // find programme #1 again and now check its 'live' value is 0
+        // it should be 0 because previously nothing was published and so everything should remain unpublished
+        // ie we have only used a revision, not made anything live
+        $programme_modified = Programme::find(1);
+        $this->assertEquals(0, $programme_modified->live);
+	}
+	
+	public function testMakeRevisionLiveGlobalSetting()
+	{
+		 //TEST ISSUE: see "@todo @workaround" in revisionble model
+
+    	// set up some data (set one manually as this db table is not cleared in teardown)
+    	$input =  array('institution_name_1' => 'University of Kent', 'year' => '2014', 'id' => 1);
+    	$this->populate('GlobalSetting', $input);
+    	$revisionable_item = GlobalSetting::find(1);
+    	
+    	// make a new revision
+        $new = GlobalSetting::find(1);
+        $new->institution_name_1 = 'UniKent';
+        $new->save();
+        
+        $revision = $new->get_revision(1);
+        
+        // make the revision live
+        $new->make_revision_live($revision);
+        
+        // find programme #1 and check its institution name is now 'UniKent'
+        $global_setting = GlobalSetting::find(1);
+        $this->assertEquals('UniKent', $global_setting->institution_name_1);
+	}
+	
+	public function testMakeRevisionLiveProgrammeSetting()
+	{
+		//TEST ISSUE: see "@todo @workaround" in revisionble model
+
+    	// set up some data (set one manually as this db table is not cleared in teardown)
+    	$input =  array('programme_title_1' => 'Test programme title', 'year' => '2014', 'id' => 1);
+    	$this->populate('ProgrammeSetting', $input);
+    	
+    	$revisionable_item = ProgrammeSetting::find(1);
+	
+    	// make a new revision
+        $new = ProgrammeSetting::find(1);
+        $new->programme_title_1 = 'The Music Programme';
+        $new->save();
+   
+        $revision = $new->get_revision(1);
+        
+        // make the revision live
+        $new->make_revision_live($revision);
+        
+        // find programme #1 and check its institution name is now 'UniKent'
+        $programme_setting = ProgrammeSetting::find(1);
+        $this->assertEquals('The Music Programme', $programme_setting->programme_title_1); 
+	}
+
+	public function testtrim_ids_from_field_namesCorrectlyRemovesIDs() {}
+
+	public function testrrim_ids_from_field_namesReturnsStdClass() {}
+
 }

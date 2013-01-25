@@ -3,11 +3,8 @@
 class GlobalSetting extends Revisionable
 {
     public static $table = 'global_settings';
-    public static $timestamps = true;
-    public $revision = false;
-    protected $revision_model = 'GlobalSettingRevision';
-    protected $revision_type = 'global_setting';
-    protected $revision_table = 'global_settings_revisions';
+    public static $revision_model = 'GlobalSettingRevision';
+    protected $data_type_id = 'global_setting';
 
     /**
      * Get the name of the 'institution name' field/column in the database.

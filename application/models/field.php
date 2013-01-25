@@ -12,7 +12,7 @@ class Field extends Eloquent
 	 */
 	public static $rules = array(
 		'title'  => 'required|max:255',
-		'type' => 'in:text,textarea,select,checkbox,help'
+		'type' => 'in:text,textarea,select,checkbox,help,table_select,table_multiselect'
 	);
 
 	/**
@@ -52,8 +52,12 @@ class Field extends Eloquent
         $this->placeholder =  Input::get('placeholder');
 
         $this->field_initval =  Input::get('initval');
+        $this->limit =  	Input::get('limit');
         
-        $this->prefill =  (Input::get('prefill')==1) ? 1 : 0;
+        $this->prefill =  ( Input::get('prefill') ==1 ) ? 1 : 0;
+        
+        $this->empty_default_value = ( Input::get('empty_default_value') == 1 ) ? 1 : 0;
+        
 	}
 
     /**
