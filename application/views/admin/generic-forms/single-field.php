@@ -13,6 +13,13 @@
     </div>
   </div>
 
+    <div class="control-group">
+      <?php echo Form::label('exclude_from_api', 'Exclude from front-end', array('class'=>'control-label'))?>
+      <div class="controls">
+        <?php echo Form::checkbox('exclude_from_api',  ( Input::old('exclude_from_api') || $create ? Input::old('exclude_from_api') : $item->exclude_from_api ))?>
+      </div>
+    </div>
+
 <?php echo Form::actions($type)?>
 
 <?php echo Form::close()?>

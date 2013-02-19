@@ -60,7 +60,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		
 		if ($this->custom_form)
 		{
-			$this->layout->nest('content', 'admin.'.$this->views.'.form',$this->data);
+			$this->layout->nest('content', 'admin.'.$this->views.'.form', $this->data);
 		}
 		else
 		{
@@ -134,6 +134,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		$new = new $this->model;
 
 		$new->name = Input::get('name');
+		$new->exclude_from_api = Input::get('exclude_from_api');
 		$new->populate_from_input();
 		$new->save();
 
@@ -164,6 +165,7 @@ class Simple_Admin_Controller extends Admin_Controller {
 		$update = $model::find(Input::get('id'));
 
 		$update->name = Input::get('name');
+		$update->exclude_from_api = Input::get('exclude_from_api');
 		$update->populate_from_input();
 
 		$update->save();
