@@ -14,13 +14,13 @@ ls application/config/local/*.sample | while read file; do mv $file  `echo $file
 echo "your turn.\n"
 echo "1. You'll need to setup a MySQL database, and record the details"
 read -n 1 -p "Press any key once you are done..."
-echo "\n2. Edit the credentials in application/config/local/database.php"
+echo "2. Edit the credentials in application/config/local/database.php"
 read -n 1 -p "Press any key once you are done..."
-echo "\n3. Edit the details in application/config/local/auth.php to setup your authorisation type."
+echo "3. Edit the details in application/config/local/auth.php to setup your authorisation type."
 read -n 1 -p "Press any key once you are done..."
-echo "\n4. Point a web server at the public/ directory."
+echo "4. Point a web server at the public/ directory."
 read -n 1 -p "Press any key once you are done..."
-echo "\nInstalling databases..."
-php artisan migrate:install --env=local
-php artisan migrate --env=local
-echo "\nAll done...point a browser to your installation!"
+echo "Installing databases..."
+php artisan migrate:install --env=local > /dev/null
+php artisan migrate --env=local > /dev/null
+echo "All done...point a browser to your installation!"
