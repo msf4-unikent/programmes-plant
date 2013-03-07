@@ -1,5 +1,5 @@
 <?php
-$diff_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@difference', array($live_revision_id));
+$diff_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@difference_with_live', array($revision->id));
 $live_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@make_live', array($revision->id));
 $use_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@use_revision', array($revision->id));
 $revert_link = action(URI::segment(1).'/'.URI::segment(2).'/'.URI::segment(3).'.' . $programme->id . '@revert_to_previous', array($revision->id));
