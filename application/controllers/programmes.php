@@ -181,23 +181,25 @@ class Programmes_Controller extends Revisionable_Controller {
 	}
 
 	/**
-	 * Routing for GET /$year/$type/programmes/$programme_id/difference/$revision_id
+	 * Routing for GET /$year/$type/programmes/$programme_id/difference_with_live/$revision_id
+	 * 
+	 * 
 	 *
 	 * @param int    $year         The year of the programme (not used, but to keep routing happy).
 	 * @param string $type         The type, either ug (undergraduate) or pg (postgraduate) (not used, but to keep routing happy).
-	 * @param int    $programme_id The programme ID we are promoting a given revision to be live.
-	 * @param int    $revision_id  The revision ID we are promote to the being the live output for the programme.
+	 * @param int    $programme_id The programme ID we are wishing to compare live revision to.
+	 * @param int    $revision_id  The revision of that programme which we wish to compare to the live revision.
 	 */
-	public function get_difference($year, $type, $programme_id = false, $revision_id = false)
+	public function get_difference_with_live($year, $type, $programme_id = false, $revision_id = false)
 	{
-		if (! $programme_id) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		$live_revision_id = Programme::get_live_revision_id($programme_id);
 
-		// Get revision specified.
 		$programme = Programme::find($programme_id);
+		$live = $programme->get_revision($live_revision_id);
 
-		if (! $programme) return Redirect::to($year.'/'.$type.'/'.$this->views);
+		$revision = $programme->get_revision($revision_id);
 
-		$difference = $programme->differences_with_revision($revision_id);
+		$difference = Programme::differences_between_revisions($live, $revision, true);
 
 		if ($difference == null)
 		{
@@ -205,17 +207,17 @@ class Programmes_Controller extends Revisionable_Controller {
 		}
 
 		$this->data['difference'] = $difference['difference'];
-		$this->data['revision'] = $difference['revision'];
+		$this->data['revision'] = $programme;
 
-		$this->data['live'] = $programme;
+		$this->data['live'] = $difference['revision'];
 
 		// Establish the information about the fields that have changed and pass them to the view.
 		$this->data['programme_fields'] = array();
 
 		foreach(array_keys($this->data['difference']) as $field_column)
 		{
-			$field = ProgrammeField::where('colname', '=', $field_column)->get();
-			$this->data['programme_fields'][$field_column] = $field[0];
+			$field = ProgrammeField::where('colname', '=', $field_column)->first();
+			$this->data['programme_fields'][$field_column] = $field;
 
 			unset($field); 
 		}
