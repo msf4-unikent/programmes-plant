@@ -62,7 +62,7 @@ class Revisionable extends SimpleData {
 		$b_attributes = $b->attributes;
 
 		// Ignore these fields which will always change.
-		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live', 'status') as $ignore) 
+		foreach (array('id', 'created_by', 'published_by', 'created_at', 'updated_at', 'live', 'status', 'made_live_by', 'published_at') as $ignore) 
 		{
 			unset($a_attributes[$ignore]);
 			unset($b_attributes[$ignore]);
