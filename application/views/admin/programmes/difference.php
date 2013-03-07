@@ -1,28 +1,69 @@
 <h1>Comparing revision <?php echo $revision->get_identifier(); ?> to live</h2>
-<p>The following shows the differences between live published <?php echo $programme->get_published_time(); ?> by <?php echo $programme->made_live_by(); ?> and revision <?php echo $revision->get_identifier_string(); ?>.</p>
-<table class="table table-striped table-bordered">
+  <table class="table table-striped table-bordered">
   <thead>
     <th></th>
     <th>Live</th>
     <th>Revision <?php echo $revision->get_identifier(); ?></th>
   </thead>
   <tbody>
-    <?php foreach ($difference as $field => $value) : ?>
+    <?php foreach ($difference as $field => $version) : ?>
     <tr>
       <td><?php echo $programme_fields[$field]->field_name; ?></td>
-      <td><?php echo $value['self']; ?></td>
       <td>
-      <?php if ($programme_fields[$field]->field_type == 'text') : ?>
-        <?php echo SimpleDiff::html_diff($value['self'], $value['revision']); ?>
-      <?php else: ?>
-        <?php echo $value['revision']; ?>
+      <?php if ($programme_fields[$field]->field_type == 'table_select') : ?>
+        <?php
+        $model = $programme_fields[$field]->field_meta; 
+        $item = $model::find($live->{$field});
+        echo $item->name;
+        ?>
+    <?php elseif ($programme_fields[$field]->field_type == 'table_multiselect') : ?>
+        <?php
+        $selections = array();
+
+        $model = $programme_fields[$field]->field_meta;
+
+        foreach (explode(',', $live->{$field}) as $selection)
+        {
+          $selections[] = $selection;
+        }
+
+        echo implode(' ', $selections);
+        ?>
+      <?php else : ?>
+        <?php echo $version['self']; ?>
+      <?php endif; ?>
+      </td>
+      <td>
+      <?php if ($programme_fields[$field]->field_type == 'text' or $programme_fields[$field]->field_type == 'textarea') : ?>
+        <?php echo SimpleDiff::html_diff($version['self'], $version['revision']); ?>
+      <?php elseif ($programme_fields[$field]->field_type == 'table_select') : ?>
+        <?php 
+        $model = $programme_fields[$field]->field_meta; 
+        $item = $model::find($revision->{$field});
+        echo $item->name;
+        ?>
+      <?php elseif ($programme_fields[$field]->field_type == 'table_multiselect') : ?>
+        <?php
+        $selections = array();
+
+        $model = $programme_fields[$field]->field_meta;
+
+        foreach (explode(',', $revision->{$field}) as $selection)
+        {
+          $selections[] = $selection;
+        }
+
+        echo implode(' ', $selections);
+        ?>
+      <?php else : ?>
+        <?php echo $version['revision']; ?>
       <?php endif; ?>
       </td>
     </tr>
     <?php endforeach; ?>
 </table>
 <div class="form-actions">
-  <a class="btn btn-danger promote_toggler" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $programme->id . '@promote', array($revision->id))?>">Accept changes and make revision live</a>
+  <a class="btn btn-danger promote_toggler" href="#promote_revision" rel="<?php echo  action(URI::segment(1).'/'.URI::segment(2).'/programmes.' . $live->id . '@promote', array($revision->id))?>">Accept changes and make revision live</a>
   <a class="btn btn-secondary" href="<?php echo url(URI::segment(1).'/'.URI::segment(2).'/programmes/revisions/'.URI::segment(4))?>">Return to revisions</a>
 </div>
 
